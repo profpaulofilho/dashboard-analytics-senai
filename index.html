@@ -149,7 +149,8 @@
   }
   .chart-card.wide { grid-column: 1 / -1; }
   .chart-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 18px; }
-  .chart-wrap { position: relative; }
+  .chart-wrap { position: relative; height: 240px; }
+  .chart-card.wide .chart-wrap { height: 300px; }
 
   /* Table */
   .table-card {
@@ -474,6 +475,7 @@ function renderLine(data) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
         x: { ticks: { color: '#6b7a99', font:{size:10}, maxTicksLimit: 7 }, grid: { color: 'rgba(255,255,255,0.04)' } },
@@ -497,6 +499,7 @@ function renderPie(id, data, dimKey) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       cutout: '60%',
       plugins: {
         legend: {
@@ -527,6 +530,7 @@ function renderBar(data) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       indexAxis: 'y',
       plugins: { legend: { display: false } },
       scales: {
@@ -668,6 +672,7 @@ function scRenderChart(){
     options: {
       indexAxis: 'y',
       responsive: true,
+      maintainAspectRatio: false,
       onClick: (evt, elements) => {
         if(!elements.length) return;
         const idx = elements[0].index;
