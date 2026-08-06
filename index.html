@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+<title>Dashboard · Sites GEP-SENAI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8edf5;
+    --muted: #6b7a99;
+    --accent1: #4f8ef7;
+    --accent2: #f7634f;
+    --accent3: #4fd6b0;
+    --accent4: #f7c34f;
+    --accent5: #c44ff7;
+    --accent6: #f74fa0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+  }
+  /* Background decoration */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(79,142,247,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -200px; left: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(79,214,176,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+
+  /* Header */
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; flex-wrap: wrap; gap: 16px; }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent1); box-shadow: 0 0 12px var(--accent1); animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .logo h1 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+  .logo span { color: var(--accent1); }
+  .period-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .period-badge select {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+  }
+  .period-badge select option { background: var(--surface); }
+
+  /* Login button */
+  #login-btn {
+    background: linear-gradient(135deg, var(--accent1), #3a6fe0);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    transition: opacity .2s, transform .1s;
+  }
+  #login-btn:hover { opacity: .9; transform: translateY(-1px); }
+  #login-btn svg { width: 18px; height: 18px; }
+
+  /* Status bar */
+  #status-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-bottom: 32px;
+    font-size: 13px;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 10px;
+  }
+  #status-bar .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent4); flex-shrink: 0; }
+  #status-bar.ok .dot { background: var(--accent3); }
+  #status-bar.error .dot { background: var(--accent2); }
+
+  /* KPI cards */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 22px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s, border-color .2s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.15); }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+  .kpi-card:nth-child(1)::before { background: var(--accent1); }
+  .kpi-card:nth-child(2)::before { background: var(--accent3); }
+  .kpi-card:nth-child(3)::before { background: var(--accent4); }
+  .kpi-card:nth-child(4)::before { background: var(--accent5); }
+  .kpi-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+  .kpi-value { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; line-height: 1; }
+  .kpi-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+  /* Charts grid */
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .charts-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  @media(max-width: 900px) { .charts-grid, .charts-grid-3 { grid-template-columns: 1fr; } }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+  }
+  .chart-card.wide { grid-column: 1 / -1; }
+  .chart-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 18px; }
+  .chart-wrap { position: relative; }
+
+  /* Table */
+  .table-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 20px;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; padding: 0 12px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); font-weight: 500; }
+  td { padding: 10px 12px; border-top: 1px solid var(--border); }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .bar-cell { display: flex; align-items: center; gap: 10px; }
+  .bar-bg { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 4px; }
+  .bar-fill { height: 100%; border-radius: 4px; background: var(--accent1); transition: width 1s ease; }
+  .rank { font-size: 11px; color: var(--muted); width: 20px; }
+
+  /* Loading skeleton */
+  .skeleton { background: linear-gradient(90deg, var(--surface2) 25%, rgba(255,255,255,0.04) 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  /* Section divider */
+  .section-divider { display:flex; align-items:center; gap:14px; margin: 44px 0 24px; }
+  .section-divider .line { flex:1; height:1px; background: var(--border); }
+  .section-divider h2 { font-family:'Syne', sans-serif; font-size:18px; font-weight:800; white-space:nowrap; }
+  .section-divider span.tag { font-size:11px; color: var(--muted); background: var(--surface2); border:1px solid var(--border); padding:4px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:0.6px; }
+
+  /* Cards de sites (link launcher) */
+  .sites-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap:14px; margin-bottom:20px; }
+  .site-card {
+    background: var(--surface); border:1px solid var(--border); border-radius:16px; padding:18px;
+    text-decoration:none; color:inherit; display:block; cursor:pointer;
+    transition: transform .18s ease, border-color .18s ease;
+  }
+  .site-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.18); }
+  .site-card .row1 { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .site-card .icon { font-size:20px; }
+  .site-card .clicks-badge { font-size:11.5px; color: var(--muted); background: rgba(255,255,255,0.05); border:1px solid var(--border); padding:4px 10px; border-radius:20px; }
+  .site-card .clicks-badge b { color: var(--text); }
+  .site-card .title { font-size:14.5px; font-weight:700; margin-bottom:4px; }
+  .site-card .domain { font-size:11.5px; color: var(--muted); }
+
+  /* Footer */
+  footer { text-align: center; padding: 24px 0 0; font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <h1>Sites <span>GEP-SENAI</span></h1>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="period-badge">
+        Período:
+        <select id="period-select" onchange="loadData()">
+          <option value="7">Últimos 7 dias</option>
+          <option value="30" selected>Últimos 30 dias</option>
+          <option value="90">Últimos 90 dias</option>
+        </select>
+      </div>
+      <button id="login-btn" onclick="handleLogin()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        Conectar Google
+      </button>
+    </div>
+  </header>
+
+  <div id="status-bar">
+    <div class="dot"></div>
+    <span id="status-msg">Clique em "Conectar Google" para carregar os dados do Analytics.</span>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Usuários ativos</div>
+      <div class="kpi-value" id="kpi-users">—</div>
+      <div class="kpi-sub">no período selecionado</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Sessões</div>
+      <div class="kpi-value" id="kpi-sessions">—</div>
+      <div class="kpi-sub">no período selecionado</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Visualizações</div>
+      <div class="kpi-value" id="kpi-views">—</div>
+      <div class="kpi-sub">de página</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Engajamento</div>
+      <div class="kpi-value" id="kpi-bounce">—</div>
+      <div class="kpi-sub">taxa de engajamento</div>
+    </div>
+  </div>
+
+  <!-- Row 1: Linha + Pizza -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">Sessões por dia</div>
+      <div class="chart-wrap"><canvas id="chart-line" height="180"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Usuários por dispositivo</div>
+      <div class="chart-wrap"><canvas id="chart-device" height="180"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Row 2: Pizza páginas + Pizza países + Barras origem -->
+  <div class="charts-grid-3">
+    <div class="chart-card">
+      <div class="chart-title">Páginas mais vistas</div>
+      <div class="chart-wrap"><canvas id="chart-pages-pie" height="200"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Países</div>
+      <div class="chart-wrap"><canvas id="chart-countries" height="200"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Origem do tráfego</div>
+      <div class="chart-wrap"><canvas id="chart-source" height="200"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Tabela páginas -->
+  <div class="table-card">
+    <div class="chart-title">Top páginas</div>
+    <table>
+      <thead><tr><th>#</th><th>Página</th><th>Visualizações</th><th>Distribuição</th></tr></thead>
+      <tbody id="pages-table"><tr><td colspan="4" style="color:var(--muted);text-align:center;padding:20px">Aguardando autenticação...</td></tr></tbody>
+    </table>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- NOVA SEÇÃO: outros sites/aplicativos que ainda não têm GA4    -->
+  <!-- instalado. Contagem de cliques real (todo mundo que acessa), -->
+  <!-- via Supabase — sem precisar de login/Property ID do GA.       -->
+  <!-- ============================================================ -->
+  <div class="section-divider">
+    <h2>Outros sites e aplicativos</h2>
+    <span class="tag">cliques reais · sem GA4</span>
+    <div class="line"></div>
+  </div>
+
+  <div class="kpi-grid" id="sc-stats">
+    <div class="kpi-card">
+      <div class="kpi-label">Aplicativos</div>
+      <div class="kpi-value" id="sc-total-sites">—</div>
+      <div class="kpi-sub">monitorados aqui</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Cliques totais</div>
+      <div class="kpi-value" id="sc-total-clicks">—</div>
+      <div class="kpi-sub">desde o início</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Mais acessado</div>
+      <div class="kpi-value" id="sc-top-site" style="font-size:20px">—</div>
+      <div class="kpi-sub">no ranking abaixo</div>
+    </div>
+  </div>
+
+  <div class="chart-card wide" style="margin-bottom:20px">
+    <div class="chart-title">Cliques por aplicativo</div>
+    <div class="chart-wrap"><canvas id="chart-site-clicks" height="230"></canvas></div>
+  </div>
+
+  <div class="sites-grid" id="sc-grid"></div>
+
+  <div class="table-card">
+    <div class="chart-title">Ranking de cliques</div>
+    <table>
+      <thead><tr><th>#</th><th>Aplicativo</th><th>Cliques</th><th>Distribuição</th></tr></thead>
+      <tbody id="sc-table"></tbody>
+    </table>
+  </div>
+
+  <footer>Dashboard · Sites GEP-SENAI · Analytics (Google, site principal) + Cliques reais (Supabase, demais sites) · Elaborado por Paulo Filho</footer>
+</div>
+
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<script>
+const CLIENT_ID = '474406221245-iedtiurooj78kielh92rips8vsjgcn0e.apps.googleusercontent.com';
+const PROPERTY_ID = '539437085';
+const SCOPE = 'https://www.googleapis.com/auth/analytics.readonly';
+
+let tokenClient, accessToken = null;
+let charts = {};
+
+const COLORS = ['#4f8ef7','#4fd6b0','#f7c34f','#c44ff7','#f74fa0','#f7634f','#47d4f5','#a0f74f'];
+
+function setStatus(msg, type='') {
+  const bar = document.getElementById('status-bar');
+  document.getElementById('status-msg').textContent = msg;
+  bar.className = type ? `${type}` : '';
+  if(type) bar.classList.add(type);
+}
+
+function handleLogin() {
+  if (!window.google) { setStatus('Aguarde o carregamento do Google Identity...', ''); return; }
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPE,
+    callback: (resp) => {
+      if (resp.error) { setStatus('Erro na autenticação: ' + resp.error, 'error'); return; }
+      accessToken = resp.access_token;
+      document.getElementById('login-btn').textContent = '✓ Conectado';
+      document.getElementById('login-btn').style.background = 'linear-gradient(135deg,#4fd6b0,#2aaa80)';
+      setStatus('Autenticado. Carregando dados...', 'ok');
+      loadData();
+    }
+  });
+  tokenClient.requestAccessToken();
+}
+
+function getPeriod() {
+  const v = document.getElementById('period-select').value;
+  const end = new Date();
+  const start = new Date(); start.setDate(start.getDate() - parseInt(v));
+  return {
+    startDate: start.toISOString().split('T')[0],
+    endDate: end.toISOString().split('T')[0]
+  };
+}
+
+async function gaRequest(body) {
+  const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${PROPERTY_ID}:runReport`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+async function loadData() {
+  if (!accessToken) return;
+  setStatus('Carregando dados...', 'ok');
+  const { startDate, endDate } = getPeriod();
+  const dr = [{ startDate, endDate }];
+
+  try {
+    // KPIs
+    const kpi = await gaRequest({ dateRanges: dr, metrics: [
+      {name:'activeUsers'},{name:'sessions'},{name:'screenPageViews'},{name:'engagementRate'}
+    ]});
+    const [users, sessions, views, eng] = kpi.rows?.[0]?.metricValues || [{value:'0'},{value:'0'},{value:'0'},{value:'0'}];
+    document.getElementById('kpi-users').textContent = fmt(users.value);
+    document.getElementById('kpi-sessions').textContent = fmt(sessions.value);
+    document.getElementById('kpi-views').textContent = fmt(views.value);
+    document.getElementById('kpi-bounce').textContent = (parseFloat(eng.value)*100).toFixed(1)+'%';
+
+    // Sessões por dia
+    const daily = await gaRequest({ dateRanges: dr, dimensions:[{name:'date'}], metrics:[{name:'sessions'}], orderBys:[{dimension:{dimensionName:'date'}}] });
+    renderLine(daily);
+
+    // Dispositivo
+    const device = await gaRequest({ dateRanges: dr, dimensions:[{name:'deviceCategory'}], metrics:[{name:'activeUsers'}] });
+    renderPie('chart-device', device, 'deviceCategory');
+
+    // Páginas
+    const pages = await gaRequest({ dateRanges: dr, dimensions:[{name:'pagePath'}], metrics:[{name:'screenPageViews'}], orderBys:[{metric:{metricName:'screenPageViews'},desc:true}], limit:8 });
+    renderPie('chart-pages-pie', pages, 'pagePath');
+    renderTable(pages);
+
+    // Países
+    const countries = await gaRequest({ dateRanges: dr, dimensions:[{name:'country'}], metrics:[{name:'activeUsers'}], orderBys:[{metric:{metricName:'activeUsers'},desc:true}], limit:6 });
+    renderPie('chart-countries', countries, 'country');
+
+    // Origem
+    const source = await gaRequest({ dateRanges: dr, dimensions:[{name:'sessionDefaultChannelGrouping'}], metrics:[{name:'sessions'}], orderBys:[{metric:{metricName:'sessions'},desc:true}], limit:6 });
+    renderBar(source);
+
+    setStatus('Dados atualizados em ' + new Date().toLocaleTimeString('pt-BR'), 'ok');
+  } catch(e) {
+    setStatus('Erro ao carregar dados: ' + e.message, 'error');
+    console.error(e);
+  }
+}
+
+function fmt(n) {
+  const v = parseInt(n);
+  if (v >= 1000) return (v/1000).toFixed(1)+'k';
+  return v.toString();
+}
+
+function shortPath(p) {
+  if (!p || p === '(not set)') return '(direto)';
+  if (p.length > 30) return '...'+p.slice(-28);
+  return p;
+}
+
+function renderLine(data) {
+  const labels = (data.rows||[]).map(r => {
+    const d = r.dimensionValues[0].value;
+    return `${d.slice(6,8)}/${d.slice(4,6)}`;
+  });
+  const values = (data.rows||[]).map(r => parseInt(r.metricValues[0].value));
+  const ctx = document.getElementById('chart-line').getContext('2d');
+  if (charts.line) charts.line.destroy();
+  charts.line = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Sessões',
+        data: values,
+        borderColor: '#4f8ef7',
+        backgroundColor: 'rgba(79,142,247,0.12)',
+        borderWidth: 2,
+        pointRadius: values.length > 30 ? 0 : 3,
+        pointBackgroundColor: '#4f8ef7',
+        fill: true,
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#6b7a99', font:{size:10}, maxTicksLimit: 7 }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { ticks: { color: '#6b7a99', font:{size:10} }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+function renderPie(id, data, dimKey) {
+  const rows = (data.rows||[]).slice(0,6);
+  const labels = rows.map(r => shortPath(r.dimensionValues[0].value));
+  const values = rows.map(r => parseInt(r.metricValues[0].value));
+  const ctx = document.getElementById(id).getContext('2d');
+  if (charts[id]) charts[id].destroy();
+  charts[id] = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{ data: values, backgroundColor: COLORS, borderWidth: 0, hoverOffset: 6 }]
+    },
+    options: {
+      responsive: true,
+      cutout: '60%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { color: '#6b7a99', font:{size:11}, padding: 12, boxWidth: 10, boxHeight: 10 }
+        }
+      }
+    }
+  });
+}
+
+function renderBar(data) {
+  const rows = (data.rows||[]).slice(0,6);
+  const labels = rows.map(r => r.dimensionValues[0].value || 'Direto');
+  const values = rows.map(r => parseInt(r.metricValues[0].value));
+  const ctx = document.getElementById('chart-source').getContext('2d');
+  if (charts.bar) charts.bar.destroy();
+  charts.bar = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: COLORS,
+        borderRadius: 6,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true,
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color:'#6b7a99', font:{size:10} }, grid:{ color:'rgba(255,255,255,0.04)' }, beginAtZero:true },
+        y: { ticks: { color:'#6b7a99', font:{size:11} }, grid:{ display:false } }
+      }
+    }
+  });
+}
+
+function renderTable(data) {
+  const rows = (data.rows||[]).slice(0,8);
+  const max = rows.length ? parseInt(rows[0].metricValues[0].value) : 1;
+  const tbody = document.getElementById('pages-table');
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:20px">Nenhum dado disponível</td></tr>'; return; }
+  tbody.innerHTML = rows.map((r,i) => {
+    const path = shortPath(r.dimensionValues[0].value);
+    const views = parseInt(r.metricValues[0].value);
+    const pct = Math.round((views/max)*100);
+    return `<tr>
+      <td><span class="rank">${i+1}</span></td>
+      <td style="font-size:13px">${path}</td>
+      <td style="font-weight:600;color:var(--accent1)">${views.toLocaleString('pt-BR')}</td>
+      <td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${COLORS[i%COLORS.length]}"></div></div><span style="font-size:11px;color:var(--muted);width:32px;text-align:right">${pct}%</span></div></td>
+    </tr>`;
+  }).join('');
+}
+</script>
+
+<!-- ================================================================== -->
+<!-- Script separado da seção "Outros sites e aplicativos" — cliques    -->
+<!-- reais via Supabase (gratuito), sem depender de login/GA4.          -->
+<!-- Nomes prefixados com "sc" (site clicks) pra não colidir com nada   -->
+<!-- do script do Google Analytics acima.                               -->
+<!-- ================================================================== -->
+<script>
+const SC_SUPABASE_URL = 'https://rbqaspkaytbplgrplelf.supabase.co';
+const SC_SUPABASE_KEY = 'sb_publishable_5ANXG4JTOaZAeINpeoTPmA_AmMxohtR';
+
+const SC_SITES = [
+  { key: 'sabia', title: 'SABIA', desc: 'Persona de IA para docentes do SENAI Bahia.', url: 'https://profpaulofilho.github.io/Sab.IA/', domain: 'profpaulofilho.github.io', icon: '🤖' },
+  { key: 'visita_tecnica', title: 'Visita Técnica SENAI Bahia', desc: 'Organização e registro de visitas técnicas.', url: 'https://visita-tecnica-senai-bahia.vercel.app/', domain: 'visita-tecnica-senai-bahia.vercel.app', icon: '🏭' },
+  { key: 'hub_artifacts_ia', title: 'Hub de Agentes de IA por Área', desc: 'Agente de IA dedicado a cada área técnica.', url: 'https://profpaulofilho.github.io/hub-artifacts_IA/', domain: 'profpaulofilho.github.io', icon: '🧰' },
+  { key: 'fase_pratica', title: 'Fase Prática', desc: 'Apoio à fase prática dos cursos técnicos.', url: 'https://gep-ba-senai-dot.github.io/Fase-Pratica/', domain: 'gep-ba-senai-dot.github.io', icon: '🎓' },
+  { key: 'psf_editora', title: 'PSF Editora e Consultoria', desc: 'Site institucional — editora e consultoria.', url: 'https://www.psfeditoraeconsultoria.com.br/', domain: 'psfeditoraeconsultoria.com.br', icon: '📚' },
+  { key: 'aura_argus', title: 'Aura & Argus', desc: 'Personas de IA — irmãs mais velhas da SABIA.', url: 'https://aura-argus.vercel.app/', domain: 'aura-argus.vercel.app', icon: '🌌' },
+  { key: 'academico_facil', title: 'Acadêmico Fácil', desc: 'Plataforma de apoio acadêmico.', url: 'https://www.academicofacil.com.br/', domain: 'academicofacil.com.br', icon: '🎯' },
+  { key: 'assis_web', title: 'AssIs Web', desc: 'Assistente de IA — irmão mais velho da SABIA.', url: 'https://assis-web.profpaulofilho.workers.dev/', domain: 'assis-web.profpaulofilho.workers.dev', icon: '🧑‍💻' },
+  { key: 'portfolio_home', title: 'Portfólio / Página Pessoal', desc: 'Página inicial com os projetos de Paulo Filho.', url: 'https://profpaulofilho.github.io/', domain: 'profpaulofilho.github.io', icon: '🏠' },
+  { key: 'gestin_senai', title: 'Gestin SENAI', desc: 'Sistema de gestão interno.', url: 'https://gestin-senai-front.vercel.app/', domain: 'gestin-senai-front.vercel.app', icon: '📊' }
+];
+
+const scGridEl = document.getElementById('sc-grid');
+const scTableEl = document.getElementById('sc-table');
+const scTotalSitesEl = document.getElementById('sc-total-sites');
+const scTotalClicksEl = document.getElementById('sc-total-clicks');
+const scTopSiteEl = document.getElementById('sc-top-site');
+
+const scClickCounts = {};
+let scChart = null;
+
+function scRenderCards(){
+  scGridEl.innerHTML = '';
+  SC_SITES.forEach(site => {
+    const a = document.createElement('a');
+    a.className = 'site-card';
+    a.href = site.url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.dataset.key = site.key;
+    const clicks = scClickCounts[site.key] != null ? scClickCounts[site.key] : 0;
+    a.innerHTML = `
+      <div class="row1">
+        <span class="icon">${site.icon}</span>
+        <span class="clicks-badge">👆 <b class="sc-clickNum">${clicks}</b></span>
+      </div>
+      <div class="title">${site.title}</div>
+      <div class="domain">${site.domain}</div>
+    `;
+    a.addEventListener('click', () => scRegisterClick(site.key));
+    scGridEl.appendChild(a);
+  });
+}
+
+function scRenderTable(){
+  const sorted = SC_SITES.slice().sort((a,b) => (scClickCounts[b.key]||0) - (scClickCounts[a.key]||0));
+  const max = Math.max(1, ...sorted.map(s => scClickCounts[s.key] || 0));
+  scTableEl.innerHTML = sorted.map((s, i) => {
+    const clicks = scClickCounts[s.key] || 0;
+    const pct = Math.round((clicks / max) * 100);
+    const color = COLORS[i % COLORS.length];
+    return `<tr>
+      <td><span class="rank">${i+1}</span></td>
+      <td style="font-size:13px"><a href="${s.url}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none" onclick="scRegisterClick('${s.key}')">${s.title}</a></td>
+      <td style="font-weight:600;color:var(--accent1)">${clicks.toLocaleString('pt-BR')}</td>
+      <td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div><span style="font-size:11px;color:var(--muted);width:32px;text-align:right">${pct}%</span></div></td>
+    </tr>`;
+  }).join('');
+}
+
+function scUpdateStats(){
+  const total = SC_SITES.reduce((sum, s) => sum + (scClickCounts[s.key] || 0), 0);
+  scTotalSitesEl.textContent = SC_SITES.length;
+  scTotalClicksEl.textContent = total;
+  let top = null;
+  SC_SITES.forEach(s => {
+    const c = scClickCounts[s.key] || 0;
+    if(c > 0 && (!top || c > top.clicks)) top = {title: s.title, clicks: c};
+  });
+  scTopSiteEl.textContent = top ? top.title : '—';
+}
+
+function scRenderChart(){
+  const sorted = SC_SITES.slice().sort((a,b) => (scClickCounts[b.key]||0) - (scClickCounts[a.key]||0));
+  const labels = sorted.map(s => s.title);
+  const values = sorted.map(s => scClickCounts[s.key] || 0);
+  const colors = sorted.map((s, i) => COLORS[i % COLORS.length]);
+  const keys = sorted.map(s => s.key);
+  const urls = sorted.map(s => s.url);
+
+  const ctx = document.getElementById('chart-site-clicks').getContext('2d');
+
+  if(scChart){
+    scChart.data.labels = labels;
+    scChart.data.datasets[0].data = values;
+    scChart.data.datasets[0].backgroundColor = colors;
+    scChart.data.datasets[0]._keys = keys;
+    scChart.data.datasets[0]._urls = urls;
+    scChart.update();
+    return;
+  }
+
+  scChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ data: values, backgroundColor: colors, borderRadius: 6, borderSkipped: false, _keys: keys, _urls: urls }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      onClick: (evt, elements) => {
+        if(!elements.length) return;
+        const idx = elements[0].index;
+        const ds = scChart.data.datasets[0];
+        scRegisterClick(ds._keys[idx]);
+        window.open(ds._urls[idx], '_blank', 'noopener,noreferrer');
+      },
+      onHover: (evt, elements) => { evt.native.target.style.cursor = elements.length ? 'pointer' : 'default'; },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: (item) => `${item.formattedValue} cliques` } }
+      },
+      scales: {
+        x: { beginAtZero: true, ticks: { color: '#6b7a99', font:{size:10}, precision: 0 }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { ticks: { color: '#e8edf5', font: { size: 11.5 } }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+async function scLoadCounts(){
+  try{
+    const resp = await fetch(`${SC_SUPABASE_URL}/rest/v1/dashboard_link_clicks?select=site_key,clicks`, {
+      headers: { 'apikey': SC_SUPABASE_KEY, 'authorization': 'Bearer ' + SC_SUPABASE_KEY }
+    });
+    const data = await resp.json();
+    if(Array.isArray(data)){
+      data.forEach(row => { scClickCounts[row.site_key] = row.clicks; });
+    }
+  } catch(err){
+    console.error('Falha ao carregar contagens do Supabase:', err);
+  } finally {
+    scRenderCards();
+    scRenderTable();
+    scUpdateStats();
+    scRenderChart();
+  }
+}
+
+async function scRegisterClick(siteKey){
+  scClickCounts[siteKey] = (scClickCounts[siteKey] || 0) + 1;
+  scRenderCards();
+  scRenderTable();
+  scUpdateStats();
+  scRenderChart();
+
+  try{
+    const resp = await fetch(`${SC_SUPABASE_URL}/rest/v1/rpc/increment_link_click`, {
+      method: 'POST',
+      headers: { 'apikey': SC_SUPABASE_KEY, 'authorization': 'Bearer ' + SC_SUPABASE_KEY, 'content-type': 'application/json' },
+      body: JSON.stringify({p_site_key: siteKey})
+    });
+    if(resp.ok){
+      const newCount = await resp.json();
+      if(typeof newCount === 'number'){
+        scClickCounts[siteKey] = newCount;
+        scRenderCards();
+        scRenderTable();
+        scUpdateStats();
+        scRenderChart();
+      }
+    }
+  } catch(err){
+    console.error('Falha ao registrar clique no Supabase:', err);
+  }
+}
+
+scRenderCards();
+scLoadCounts();
+</script>
+</body>
+</html>
