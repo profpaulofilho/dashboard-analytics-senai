@@ -149,8 +149,7 @@
   }
   .chart-card.wide { grid-column: 1 / -1; }
   .chart-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 18px; }
-  .chart-wrap { position: relative; height: 240px; }
-  .chart-card.wide .chart-wrap { height: 300px; }
+  .chart-wrap { position: relative; }
 
   /* Table */
   .table-card {
@@ -289,13 +288,14 @@
   </div>
 
   <!-- ============================================================ -->
-  <!-- NOVA SEÇÃO: outros sites/aplicativos que ainda não têm GA4    -->
-  <!-- instalado. Contagem de cliques real (todo mundo que acessa), -->
-  <!-- via Supabase — sem precisar de login/Property ID do GA.       -->
+  <!-- Seção: outros sites/aplicativos que ainda não têm GA4          -->
+  <!-- instalado. Contagem de acessos real (todo mundo que acessa),  -->
+  <!-- via Supabase — cada site avisa sozinho quando é visitado de    -->
+  <!-- verdade, não só quando alguém clica aqui no painel.            -->
   <!-- ============================================================ -->
   <div class="section-divider">
     <h2>Outros sites e aplicativos</h2>
-    <span class="tag">cliques reais · sem GA4</span>
+    <span class="tag">acessos reais · sem GA4</span>
     <div class="line"></div>
   </div>
 
@@ -306,7 +306,7 @@
       <div class="kpi-sub">monitorados aqui</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Cliques totais</div>
+      <div class="kpi-label">Acessos totais</div>
       <div class="kpi-value" id="sc-total-clicks">—</div>
       <div class="kpi-sub">desde o início</div>
     </div>
@@ -318,21 +318,21 @@
   </div>
 
   <div class="chart-card wide" style="margin-bottom:20px">
-    <div class="chart-title">Cliques por aplicativo</div>
+    <div class="chart-title">Acessos por aplicativo</div>
     <div class="chart-wrap"><canvas id="chart-site-clicks" height="230"></canvas></div>
   </div>
 
   <div class="sites-grid" id="sc-grid"></div>
 
   <div class="table-card">
-    <div class="chart-title">Ranking de cliques</div>
+    <div class="chart-title">Ranking de acessos</div>
     <table>
-      <thead><tr><th>#</th><th>Aplicativo</th><th>Cliques</th><th>Distribuição</th></tr></thead>
+      <thead><tr><th>#</th><th>Aplicativo</th><th>Acessos</th><th>Distribuição</th></tr></thead>
       <tbody id="sc-table"></tbody>
     </table>
   </div>
 
-  <footer>Dashboard · Sites GEP-SENAI · Analytics (Google, site principal) + Cliques reais (Supabase, demais sites) · Elaborado por Paulo Filho</footer>
+  <footer>Dashboard · Sites GEP-SENAI · Analytics (Google, site principal) + Acessos reais (Supabase, demais sites) · Elaborado por Paulo Filho</footer>
 </div>
 
 <!-- Google Identity Services -->
@@ -475,7 +475,6 @@ function renderLine(data) {
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
         x: { ticks: { color: '#6b7a99', font:{size:10}, maxTicksLimit: 7 }, grid: { color: 'rgba(255,255,255,0.04)' } },
@@ -499,7 +498,6 @@ function renderPie(id, data, dimKey) {
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false,
       cutout: '60%',
       plugins: {
         legend: {
@@ -530,7 +528,6 @@ function renderBar(data) {
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false,
       indexAxis: 'y',
       plugins: { legend: { display: false } },
       scales: {
@@ -561,8 +558,10 @@ function renderTable(data) {
 </script>
 
 <!-- ================================================================== -->
-<!-- Script separado da seção "Outros sites e aplicativos" — cliques    -->
-<!-- reais via Supabase (gratuito), sem depender de login/GA4.          -->
+<!-- Script separado da seção "Outros sites e aplicativos" — acessos    -->
+<!-- reais via Supabase (gratuito), sem depender de login/GA4. Cada     -->
+<!-- site avisa sozinho quando é visitado de verdade — o painel aqui    -->
+<!-- só navega, não conta mais nada por conta própria.                  -->
 <!-- Nomes prefixados com "sc" (site clicks) pra não colidir com nada   -->
 <!-- do script do Google Analytics acima.                               -->
 <!-- ================================================================== -->
@@ -580,7 +579,8 @@ const SC_SITES = [
   { key: 'academico_facil', title: 'Acadêmico Fácil', desc: 'Plataforma de apoio acadêmico.', url: 'https://www.academicofacil.com.br/', domain: 'academicofacil.com.br', icon: '🎯' },
   { key: 'assis_web', title: 'AssIs Web', desc: 'Assistente de IA — irmão mais velho da SABIA.', url: 'https://assis-web.profpaulofilho.workers.dev/', domain: 'assis-web.profpaulofilho.workers.dev', icon: '🧑‍💻' },
   { key: 'portfolio_home', title: 'Portfólio / Página Pessoal', desc: 'Página inicial com os projetos de Paulo Filho.', url: 'https://profpaulofilho.github.io/', domain: 'profpaulofilho.github.io', icon: '🏠' },
-  { key: 'gestin_senai', title: 'Gestin SENAI', desc: 'Sistema de gestão interno.', url: 'https://gestin-senai-front.vercel.app/', domain: 'gestin-senai-front.vercel.app', icon: '📊' }
+  { key: 'gestin_senai', title: 'Gestin SENAI', desc: 'Sistema de gestão interno.', url: 'https://gestin-senai-front.vercel.app/', domain: 'gestin-senai-front.vercel.app', icon: '📊' },
+  { key: 'ia_docentes', title: 'Hub de Agentes IA (novo)', desc: 'Versão Next.js/Supabase do hub de agentes, com login e log de acessos por agente.', url: 'https://ia-docentes-zeta.vercel.app/', domain: 'ia-docentes-zeta.vercel.app', icon: '🧑‍🏫' }
 ];
 
 const scGridEl = document.getElementById('sc-grid');
@@ -610,7 +610,8 @@ function scRenderCards(){
       <div class="title">${site.title}</div>
       <div class="domain">${site.domain}</div>
     `;
-    a.addEventListener('click', () => scRegisterClick(site.key));
+    // Não registra mais acesso aqui — cada site agora avisa sozinho quando é visitado
+    // de verdade (snippet de rastreio instalado em cada um). O card só navega.
     scGridEl.appendChild(a);
   });
 }
@@ -624,7 +625,7 @@ function scRenderTable(){
     const color = COLORS[i % COLORS.length];
     return `<tr>
       <td><span class="rank">${i+1}</span></td>
-      <td style="font-size:13px"><a href="${s.url}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none" onclick="scRegisterClick('${s.key}')">${s.title}</a></td>
+      <td style="font-size:13px"><a href="${s.url}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none">${s.title}</a></td>
       <td style="font-weight:600;color:var(--accent1)">${clicks.toLocaleString('pt-BR')}</td>
       <td><div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div><span style="font-size:11px;color:var(--muted);width:32px;text-align:right">${pct}%</span></div></td>
     </tr>`;
@@ -672,18 +673,16 @@ function scRenderChart(){
     options: {
       indexAxis: 'y',
       responsive: true,
-      maintainAspectRatio: false,
       onClick: (evt, elements) => {
         if(!elements.length) return;
         const idx = elements[0].index;
         const ds = scChart.data.datasets[0];
-        scRegisterClick(ds._keys[idx]);
         window.open(ds._urls[idx], '_blank', 'noopener,noreferrer');
       },
       onHover: (evt, elements) => { evt.native.target.style.cursor = elements.length ? 'pointer' : 'default'; },
       plugins: {
         legend: { display: false },
-        tooltip: { callbacks: { label: (item) => `${item.formattedValue} cliques` } }
+        tooltip: { callbacks: { label: (item) => `${item.formattedValue} acessos` } }
       },
       scales: {
         x: { beginAtZero: true, ticks: { color: '#6b7a99', font:{size:10}, precision: 0 }, grid: { color: 'rgba(255,255,255,0.04)' } },
@@ -709,34 +708,6 @@ async function scLoadCounts(){
     scRenderTable();
     scUpdateStats();
     scRenderChart();
-  }
-}
-
-async function scRegisterClick(siteKey){
-  scClickCounts[siteKey] = (scClickCounts[siteKey] || 0) + 1;
-  scRenderCards();
-  scRenderTable();
-  scUpdateStats();
-  scRenderChart();
-
-  try{
-    const resp = await fetch(`${SC_SUPABASE_URL}/rest/v1/rpc/increment_link_click`, {
-      method: 'POST',
-      headers: { 'apikey': SC_SUPABASE_KEY, 'authorization': 'Bearer ' + SC_SUPABASE_KEY, 'content-type': 'application/json' },
-      body: JSON.stringify({p_site_key: siteKey})
-    });
-    if(resp.ok){
-      const newCount = await resp.json();
-      if(typeof newCount === 'number'){
-        scClickCounts[siteKey] = newCount;
-        scRenderCards();
-        scRenderTable();
-        scUpdateStats();
-        scRenderChart();
-      }
-    }
-  } catch(err){
-    console.error('Falha ao registrar clique no Supabase:', err);
   }
 }
 
