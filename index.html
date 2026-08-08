@@ -149,7 +149,14 @@
   }
   .chart-card.wide { grid-column: 1 / -1; }
   .chart-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 18px; }
-  .chart-wrap { position: relative; }
+  /* Altura FIXA no container do canvas — essencial com Chart.js responsive.
+     Sem isso, cada redraw/resize recalcula o tamanho a partir do último
+     canvas renderizado (não do atributo height original), e o gráfico vai
+     encolhendo a cada atualização. maintainAspectRatio:false (nos options
+     de cada gráfico, abaixo) trabalha junto com isso. */
+  .chart-wrap { position: relative; height: 260px; }
+  .charts-grid-3 .chart-wrap { height: 240px; }
+  .chart-card.wide .chart-wrap { height: 320px; }
 
   /* Table */
   .table-card {
@@ -256,11 +263,11 @@
   <div class="charts-grid">
     <div class="chart-card">
       <div class="chart-title">Sessões por dia</div>
-      <div class="chart-wrap"><canvas id="chart-line" height="180"></canvas></div>
+      <div class="chart-wrap"><canvas id="chart-line"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Usuários por dispositivo</div>
-      <div class="chart-wrap"><canvas id="chart-device" height="180"></canvas></div>
+      <div class="chart-wrap"><canvas id="chart-device"></canvas></div>
     </div>
   </div>
 
@@ -268,15 +275,15 @@
   <div class="charts-grid-3">
     <div class="chart-card">
       <div class="chart-title">Páginas mais vistas</div>
-      <div class="chart-wrap"><canvas id="chart-pages-pie" height="200"></canvas></div>
+      <div class="chart-wrap"><canvas id="chart-pages-pie"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Países</div>
-      <div class="chart-wrap"><canvas id="chart-countries" height="200"></canvas></div>
+      <div class="chart-wrap"><canvas id="chart-countries"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Origem do tráfego</div>
-      <div class="chart-wrap"><canvas id="chart-source" height="200"></canvas></div>
+      <div class="chart-wrap"><canvas id="chart-source"></canvas></div>
     </div>
   </div>
 
@@ -321,7 +328,7 @@
 
   <div class="chart-card wide" style="margin-bottom:20px">
     <div class="chart-title">Acessos por aplicativo</div>
-    <div class="chart-wrap"><canvas id="chart-site-clicks" height="230"></canvas></div>
+    <div class="chart-wrap"><canvas id="chart-site-clicks"></canvas></div>
   </div>
 
   <div class="sites-grid" id="sc-grid"></div>
@@ -477,6 +484,7 @@ function renderLine(data) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
         x: { ticks: { color: '#6b7a99', font:{size:10}, maxTicksLimit: 7 }, grid: { color: 'rgba(255,255,255,0.04)' } },
@@ -500,6 +508,7 @@ function renderPie(id, data, dimKey) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       cutout: '60%',
       plugins: {
         legend: {
@@ -530,6 +539,7 @@ function renderBar(data) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       indexAxis: 'y',
       plugins: { legend: { display: false } },
       scales: {
@@ -675,6 +685,7 @@ function scRenderChart(){
     options: {
       indexAxis: 'y',
       responsive: true,
+      maintainAspectRatio: false,
       onClick: (evt, elements) => {
         if(!elements.length) return;
         const idx = elements[0].index;
