@@ -29,7 +29,6 @@
     font-family: 'Space Grotesk', sans-serif;
     min-height: 100vh;
   }
-  /* Background decoration */
   body::before {
     content: '';
     position: fixed;
@@ -51,7 +50,6 @@
 
   .wrapper { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
 
-  /* Header */
   header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; flex-wrap: wrap; gap: 16px; }
   .logo { display: flex; align-items: center; gap: 12px; }
   .logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent1); box-shadow: 0 0 12px var(--accent1); animation: pulse 2s ease-in-out infinite; }
@@ -78,7 +76,6 @@
   }
   .period-badge select option { background: var(--surface); }
 
-  /* Login button */
   #login-btn {
     background: linear-gradient(135deg, var(--accent1), #3a6fe0);
     border: none;
@@ -95,7 +92,6 @@
   #login-btn:hover { opacity: .9; transform: translateY(-1px); }
   #login-btn svg { width: 18px; height: 18px; }
 
-  /* Status bar */
   #status-bar {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -110,7 +106,6 @@
   #status-bar.ok .dot { background: var(--accent3); }
   #status-bar.error .dot { background: var(--accent2); }
 
-  /* KPI cards */
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
   .kpi-card {
     background: var(--surface);
@@ -137,7 +132,6 @@
   .kpi-value { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; line-height: 1; }
   .kpi-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
 
-  /* Charts grid */
   .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
   .charts-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
   @media(max-width: 900px) { .charts-grid, .charts-grid-3 { grid-template-columns: 1fr; } }
@@ -149,16 +143,10 @@
   }
   .chart-card.wide { grid-column: 1 / -1; }
   .chart-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 18px; }
-  /* Altura FIXA no container do canvas — essencial com Chart.js responsive.
-     Sem isso, cada redraw/resize recalcula o tamanho a partir do último
-     canvas renderizado (não do atributo height original), e o gráfico vai
-     encolhendo a cada atualização. maintainAspectRatio:false (nos options
-     de cada gráfico, abaixo) trabalha junto com isso. */
   .chart-wrap { position: relative; height: 260px; }
   .charts-grid-3 .chart-wrap { height: 240px; }
   .chart-card.wide .chart-wrap { height: 320px; }
 
-  /* Table */
   .table-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -175,17 +163,14 @@
   .bar-fill { height: 100%; border-radius: 4px; background: var(--accent1); transition: width 1s ease; }
   .rank { font-size: 11px; color: var(--muted); width: 20px; }
 
-  /* Loading skeleton */
   .skeleton { background: linear-gradient(90deg, var(--surface2) 25%, rgba(255,255,255,0.04) 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
   @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-  /* Section divider */
   .section-divider { display:flex; align-items:center; gap:14px; margin: 44px 0 24px; }
   .section-divider .line { flex:1; height:1px; background: var(--border); }
   .section-divider h2 { font-family:'Syne', sans-serif; font-size:18px; font-weight:800; white-space:nowrap; }
   .section-divider span.tag { font-size:11px; color: var(--muted); background: var(--surface2); border:1px solid var(--border); padding:4px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:0.6px; }
 
-  /* Cards de sites (link launcher) */
   .sites-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap:14px; margin-bottom:20px; }
   .site-card {
     background: var(--surface); border:1px solid var(--border); border-radius:16px; padding:18px;
@@ -200,7 +185,6 @@
   .site-card .title { font-size:14.5px; font-weight:700; margin-bottom:4px; }
   .site-card .domain { font-size:11.5px; color: var(--muted); }
 
-  /* Footer */
   footer { text-align: center; padding: 24px 0 0; font-size: 12px; color: var(--muted); }
 </style>
 </head>
@@ -235,7 +219,6 @@
     <span id="status-msg">Clique em "Conectar Google" para carregar os dados do Analytics.</span>
   </div>
 
-  <!-- KPIs -->
   <div class="kpi-grid">
     <div class="kpi-card">
       <div class="kpi-label">Usuários ativos</div>
@@ -259,7 +242,6 @@
     </div>
   </div>
 
-  <!-- Row 1: Linha + Pizza -->
   <div class="charts-grid">
     <div class="chart-card">
       <div class="chart-title">Sessões por dia</div>
@@ -271,7 +253,6 @@
     </div>
   </div>
 
-  <!-- Row 2: Pizza páginas + Pizza países + Barras origem -->
   <div class="charts-grid-3">
     <div class="chart-card">
       <div class="chart-title">Páginas mais vistas</div>
@@ -287,7 +268,6 @@
     </div>
   </div>
 
-  <!-- Tabela páginas -->
   <div class="table-card">
     <div class="chart-title">Top páginas</div>
     <table>
@@ -296,12 +276,6 @@
     </table>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- Seção: outros sites/aplicativos que ainda não têm GA4          -->
-  <!-- instalado. Contagem de acessos real (todo mundo que acessa),  -->
-  <!-- via Supabase — cada site avisa sozinho quando é visitado de    -->
-  <!-- verdade, não só quando alguém clica aqui no painel.            -->
-  <!-- ============================================================ -->
   <div class="section-divider">
     <h2>Outros sites e aplicativos</h2>
     <span class="tag">acessos reais · sem GA4</span>
@@ -344,7 +318,6 @@
   <footer>Dashboard · Sites GEP-SENAI · Analytics (Google, site principal) + Acessos reais (Supabase, demais sites) · Elaborado por Paulo Filho</footer>
 </div>
 
-<!-- Google Identity Services -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <script>
@@ -408,7 +381,6 @@ async function loadData() {
   const dr = [{ startDate, endDate }];
 
   try {
-    // KPIs
     const kpi = await gaRequest({ dateRanges: dr, metrics: [
       {name:'activeUsers'},{name:'sessions'},{name:'screenPageViews'},{name:'engagementRate'}
     ]});
@@ -418,24 +390,19 @@ async function loadData() {
     document.getElementById('kpi-views').textContent = fmt(views.value);
     document.getElementById('kpi-bounce').textContent = (parseFloat(eng.value)*100).toFixed(1)+'%';
 
-    // Sessões por dia
     const daily = await gaRequest({ dateRanges: dr, dimensions:[{name:'date'}], metrics:[{name:'sessions'}], orderBys:[{dimension:{dimensionName:'date'}}] });
     renderLine(daily);
 
-    // Dispositivo
     const device = await gaRequest({ dateRanges: dr, dimensions:[{name:'deviceCategory'}], metrics:[{name:'activeUsers'}] });
     renderPie('chart-device', device, 'deviceCategory');
 
-    // Páginas
     const pages = await gaRequest({ dateRanges: dr, dimensions:[{name:'pagePath'}], metrics:[{name:'screenPageViews'}], orderBys:[{metric:{metricName:'screenPageViews'},desc:true}], limit:8 });
     renderPie('chart-pages-pie', pages, 'pagePath');
     renderTable(pages);
 
-    // Países
     const countries = await gaRequest({ dateRanges: dr, dimensions:[{name:'country'}], metrics:[{name:'activeUsers'}], orderBys:[{metric:{metricName:'activeUsers'},desc:true}], limit:6 });
     renderPie('chart-countries', countries, 'country');
 
-    // Origem
     const source = await gaRequest({ dateRanges: dr, dimensions:[{name:'sessionDefaultChannelGrouping'}], metrics:[{name:'sessions'}], orderBys:[{metric:{metricName:'sessions'},desc:true}], limit:6 });
     renderBar(source);
 
@@ -569,14 +536,6 @@ function renderTable(data) {
 }
 </script>
 
-<!-- ================================================================== -->
-<!-- Script separado da seção "Outros sites e aplicativos" — acessos    -->
-<!-- reais via Supabase (gratuito), sem depender de login/GA4. Cada     -->
-<!-- site avisa sozinho quando é visitado de verdade — o painel aqui    -->
-<!-- só navega, não conta mais nada por conta própria.                  -->
-<!-- Nomes prefixados com "sc" (site clicks) pra não colidir com nada   -->
-<!-- do script do Google Analytics acima.                               -->
-<!-- ================================================================== -->
 <script>
 const SC_SUPABASE_URL = 'https://rbqaspkaytbplgrplelf.supabase.co';
 const SC_SUPABASE_KEY = 'sb_publishable_5ANXG4JTOaZAeINpeoTPmA_AmMxohtR';
@@ -586,11 +545,7 @@ const SC_SITES = [
   { key: 'visita_tecnica', title: 'Visita Técnica SENAI Bahia', desc: 'Organização e registro de visitas técnicas.', url: 'https://visita-tecnica-senai-bahia.vercel.app/', domain: 'visita-tecnica-senai-bahia.vercel.app', icon: '🏭' },
   { key: 'hub_artifacts_ia', title: 'Hub de Agentes de IA por Área', desc: 'Agente de IA dedicado a cada área técnica.', url: 'https://profpaulofilho.github.io/hub-artifacts_IA/', domain: 'profpaulofilho.github.io', icon: '🧰' },
   { key: 'fase_pratica', title: 'Fase Prática', desc: 'Apoio à fase prática dos cursos técnicos.', url: 'https://gep-ba-senai-dot.github.io/Fase-Pratica/', domain: 'gep-ba-senai-dot.github.io', icon: '🎓' },
-  { key: 'psf_editora', title: 'PSF Editora e Consultoria', desc: 'Site institucional — editora e consultoria.', url: 'https://www.psfeditoraeconsultoria.com.br/', domain: 'psfeditoraeconsultoria.com.br', icon: '📚' },
-  { key: 'aura_argus', title: 'Aura & Argus', desc: 'Personas de IA — irmãs mais velhas da SABIA.', url: 'https://aura-argus.vercel.app/', domain: 'aura-argus.vercel.app', icon: '🌌' },
-  { key: 'academico_facil', title: 'Acadêmico Fácil', desc: 'Plataforma de apoio acadêmico.', url: 'https://www.academicofacil.com.br/', domain: 'academicofacil.com.br', icon: '🎯' },
   { key: 'assis_web', title: 'AssIs Web', desc: 'Assistente de IA — irmão mais velho da SABIA.', url: 'https://assis-web.profpaulofilho.workers.dev/', domain: 'assis-web.profpaulofilho.workers.dev', icon: '🧑‍💻' },
-  { key: 'portfolio_home', title: 'Portfólio / Página Pessoal', desc: 'Página inicial com os projetos de Paulo Filho.', url: 'https://profpaulofilho.github.io/', domain: 'profpaulofilho.github.io', icon: '🏠' },
   { key: 'gestin_senai', title: 'Gestin SENAI', desc: 'Sistema de gestão interno.', url: 'https://gestin-senai-front.vercel.app/', domain: 'gestin-senai-front.vercel.app', icon: '📊' },
   { key: 'ia_docentes', title: 'Hub de Agentes IA (novo)', desc: 'Versão Next.js/Supabase do hub de agentes, com login e log de acessos por agente.', url: 'https://ia-docentes-zeta.vercel.app/', domain: 'ia-docentes-zeta.vercel.app', icon: '🧑‍🏫' }
 ];
@@ -622,8 +577,6 @@ function scRenderCards(){
       <div class="title">${site.title}</div>
       <div class="domain">${site.domain}</div>
     `;
-    // Não registra mais acesso aqui — cada site agora avisa sozinho quando é visitado
-    // de verdade (snippet de rastreio instalado em cada um). O card só navega.
     scGridEl.appendChild(a);
   });
 }
@@ -661,7 +614,6 @@ function scRenderChart(){
   const labels = sorted.map(s => s.title);
   const values = sorted.map(s => scClickCounts[s.key] || 0);
   const colors = sorted.map((s, i) => COLORS[i % COLORS.length]);
-  const keys = sorted.map(s => s.key);
   const urls = sorted.map(s => s.url);
 
   const ctx = document.getElementById('chart-site-clicks').getContext('2d');
@@ -670,7 +622,6 @@ function scRenderChart(){
     scChart.data.labels = labels;
     scChart.data.datasets[0].data = values;
     scChart.data.datasets[0].backgroundColor = colors;
-    scChart.data.datasets[0]._keys = keys;
     scChart.data.datasets[0]._urls = urls;
     scChart.update();
     return;
@@ -680,7 +631,7 @@ function scRenderChart(){
     type: 'bar',
     data: {
       labels,
-      datasets: [{ data: values, backgroundColor: colors, borderRadius: 6, borderSkipped: false, _keys: keys, _urls: urls }]
+      datasets: [{ data: values, backgroundColor: colors, borderRadius: 6, borderSkipped: false, _urls: urls }]
     },
     options: {
       indexAxis: 'y',
